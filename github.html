@@ -3,65 +3,152 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 
 	<style>
 		body, html {
-			font-family: monospace;
+			font-family: arial;
 		}
-		#code {
+		.code {
+			font-family: monospace;
+			font-size: 14px;
 			background-color: #f1f1f1;
 			border-radius: 5px;
 			padding: 5px;
 			padding-left: 15px;
 		}
+		.display-none {
+			display: none;
+		}
+		.bdr {
+			border-top: solid 1px black;
+		}
+		.ellipsis {
+			white-space: nowrap;
+ 			overflow: hidden;
+ 			text-overflow: ellipsis;
+		}
+		.list {
+			font-size: 30px;
+		}
 	</style>
 
-    <title>Hello, world!</title>
+    <title>Github resume</title>
 </head>
 	<body>
+		<div id="loading" class="fixed-bottom container h-100">
+		  <div class="row h-100 justify-content-center align-items-center">
+		    <div class="col-12 text-center">
+				<div class="spinner-border" role="status">
+	  				<span class="sr-only">Loading...</span>
+				</div>
+		  	</div>
+		  </div>
+		</div>
 
-		<div id="code">
+		<div id="content" class="container-fluid p-0 pt-3 display-none">
+			<div class="p-3">
+				<input id="search" type="text" placeholder="Login"/>
+				<button type="button" onclick="search_api()">ok</button>
+			</div>
+			<div id="table" class="p-3">
+
+			</div>
+
+			<p class="m-0 p-0 pb-2 pl-3 pr-3">Console</p>
+			<div class="row p-3 m-0">
+				<div id="console" class="code p-4"></div>
+			</div>
+			<p class="m-0 p-0 pb-2 pl-3 pr-3">Raw code</p>
+			<div class="row p-3 m-0">
+				<div id="raw" class="code p-4"></div>
+			</div>
+
 
 		</div>
 
 
 		<script type="text/javascript">
-		function output(input) {
-		    document.getElementById("code").appendChild(document.createElement('p')).innerHTML = input;
+
+		function output(input, element) {
+			element.append(function() {
+  				return "<p>" + input + "</p>";
+			});
 		}
 
-		function syntaxHighlight(json) {
-    		if (typeof json != 'string') {
-         		json = JSON.stringify(json, undefined, 2);
-    		}
-    		json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    		return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
-	        	var cls = 'number';
-	        	if (/^"/.test(match)) {
-	            	if (/:$/.test(match)) {
-	                	cls = 'key';
-	            	} else {
-	                	cls = 'string';
-	            	}
-	        	} else if (/true|false/.test(match)) {
-	            	cls = 'boolean';
-	        	} else if (/null/.test(match)) {
-	            	cls = 'null';
-	        	}
-	        	return '<span class="' + cls + '">' + match + '</span>';
-    		});
+		function display_loading(index) {
+			var loading = $('#loading');
+			var content = $('#content');
+			if (index == 0) {
+				content.css("display", "none");
+			} else {
+				loading.css("display", "none");
+				content.css("display", "block");
+			}
 		}
 
-			const username = "mcabrol"
+		function print(value) {
+			$("#console").append(function() {
+				return (
+						  + value['name'] + " / "
+					 	  + value['created_at'] + " / "
+						  + value['description'] + " / "
+						  + value['language'] + " / "
+						  + value['license'] + "</p>"
+				);
+			});
+
+			$("#table").append(function() {
+				return (
+					'<div class="list bdr row m-0 p-0"><div class="col-md-3 p-0 m-0"><p class="p-0 m-0">'+ value['name'] +'</p></div><div class="col-md-1 p-0 m-0"><p class="p-0 m-0">'+ value['created_at'].substr(0, 4) +'</p></div><div class="col-md-2 p-0 m-0"><p class="p-0 m-0">'+ value['language'] +'</p></div><div class="col-md-3 p-0 m-0"><p class="p-0 m-0 ellipsis">'+ value['description'] +'</p></div></div>'
+				);
+			});
+  			// output(value['name'], $("#console"));
+		}
+
+		function parse(data) {
+			var obj = JSON.parse(data);
+			console.log(obj);
+
+			console.log(obj["message"]);
+
+			if (obj["message"] && obj["message"].localeCompare("Not found")) {
+				output("Not found", $("#console"));
+			} else {
+				obj.forEach(print);
+
+				// Raw code
+				var str = JSON.stringify(data, undefined, 4);
+				output(str, $("#raw"));
+			}
+		}
+
+		function search_api() {
+			var x = $("#search").val();
+			request(x);
+		}
+
+		function request(username)
+		{
 			const xhr = new XMLHttpRequest();
 			const url = `https://api.github.com/users/${username}/repos`;
 			xhr.open('GET', url, true);
 			xhr.onload = function() {
-				data = JSON.parse(this.response);
-				var str = JSON.stringify(data, undefined, 4);
-				output(syntaxHighlight(str));
+				display_loading(0);
+				parse(this.response);
+				display_loading(1);
 			}
 			xhr.send();
+		}
+
+		$( document ).ready(function() {
+    		console.log( "ready!" );
+			request("mcabrol");
+		});
+
+
+
 
 
 		</script>
