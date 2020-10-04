@@ -1,86 +1,66 @@
-function request_profile(username)
-{
-	const xhr = new XMLHttpRequest();
-	const url = `https://api.github.com/users/${username}/repos`;
-	xhr.open('GET', url, true);
-	xhr.onload = function() {
-		display_loading(0);
-		parse(this.response);
-		display_loading(1);
-	}
-	xhr.send();
+function getRemote(remote_url) {
+    return $.ajax({
+        type: "GET",
+        url: remote_url,
+        async: true
+    }).responseText;
 }
 
-function request_readme(raw_url)
-{
-	const xhr = new XMLHttpRequest();
-	const url = `${raw_url}`;
-	xhr.open('GET', url, true);
-	xhr.onload = function() {
-		display_loading(0);
-		parse_readme(this.response);
-		display_loading(1);
-	}
-	xhr.send();
-}
-
-function request_contributors(project)
-{
-	const xhr = new XMLHttpRequest();
-	const url = `https://api.github.com/repos/mcabrol/${project}/contributors`;
-	xhr.open('GET', url, true);
-	xhr.onload = function() {
-		display_loading(0);
-		parse_contributors(this.response);
-		display_loading(1);
-	}
-	xhr.send();
-}
-
-function request_commits(project)
-{
-	const xhr = new XMLHttpRequest();
-	const url = `https://api.github.com/repos/mcabrol/${project}/commits`;
-	xhr.open('GET', url, true);
-	xhr.onload = function() {
-		display_loading(0);
-		parse_commits(this.response);
-		display_loading(1);
-	}
-	xhr.send();
-}
-
-function request_contents(project)
-{
-	const xhr = new XMLHttpRequest();
-	const url = `https://api.github.com/repos/mcabrol/${project}/contents`;
-	xhr.open('GET', url, true);
-	xhr.onload = function() {
-		display_loading(0);
-		parse_contents(this.response);
-		display_loading(1);
-	}
-	xhr.send();
-}
+// function
 
 function request(username) {
 	display_loading(0);
+
 	var api = "https:/api.github.com/";
-	var usr = api + "users/" + username;
-	var repo = usr + "/repos";
-	var index = [usr, repo];
-	var xhr = new XMLHttpRequest();
-	for (var i = 0; i < 2; i++) {
-		var url = index[i];
-		console.log("url: " + url);
-		xhr.open("GET", url);
-		xhr.onload = function () {
-			console.log(this.response);
-		}
-		xhr.send();
-	}
+	var url_usr = api + "users/" + username;
+	var url_repos = url_usr + "/repos";
+
+	var data_profile = getRemote(url_usr);
+	var obj_profile = JSON.parse(data_profile);
+	parse_profile(obj_profile);
+
+	var data_repos = getRemote(url_repos);
+
+	var obj_repos = JSON.parse(data_repos);
+
+	parse(data_repos);
+
+
+	obj_repos.forEach((value, i) => {
+
+		var url_project = api + "repos/" + username + "/" + value.name;
+		var url_contents = url_project + "/contents/";
+		var url_commits = url_project + "/commits/";
+		var url_contributors = url_project + "/contributors";
+
+		output("[" + i + "] = " + value.name, $("#console"));
+
+		var data_contents = getRemote(url_contents);
+		var obj_contents = JSON.parse(data_contents);
+		obj_contents.forEach((value, i) => {
+			output("- " + value.name, $("#console"));
+		});
+
+		// var data_contributors = getRemote(url_contributors);
+		// var obj_contributors = JSON.parse(data_contributors);
+		// if (Object.keys(obj_contributors).length > 1) {
+		// 	console.log(obj_contributors);
+		// 	obj_contributors.forEach((value, i) => {
+		// 		output("Contributors " + i + " : " + value.login, $("#console"));
+		// 	});
+		// }
+
+
+		// obj_contributors.forEach((value, i) => {
+		// 	output("Contributors: " + value.name, $("#console"));
+		// });
+
+	});
+
+
 	display_loading(1);
 }
+
 
 
 

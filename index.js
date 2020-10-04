@@ -8,9 +8,13 @@ function invert() {
 }
 
 
+
+
 $( document ).ready(function() {
 
 	console.log( "ready!" );
-	request_profile("mcabrol");
-	// request("mcabrol");
+	// request_profile("mcabrol");
+	request("mcabrol");
+
+
 });

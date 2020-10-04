@@ -9,13 +9,25 @@ function parse_contributors(data) {
 	}
 }
 
+function parse_profile(object) {
+	console.log(object);
+	// output("<h1>" + object.login + "</h1>", $("#info_window"));
+	output(object.login, $("#logo"));
+	output("<h1>" + object.bio + "</h1>", $("#info_window"));
+	// output("Email: " + object.email, $("#info_window"));
+	output("<h1>" + object.location + "</h1>", $("#info_window"));
+	// output("Following: " + object.following, $("#info_window"));
+	// output("Followers: " + object.followers, $("#info_window"));
+	// output("Repos: " + object.public_repos, $("#info_window"));
+}
+
 function parse_contents(data) {
 	var obj = JSON.parse(data);
 	var size = Object.keys(obj).length;
 	var readme = 0;
 	console.log(size + " files:")
 	obj.forEach(function (value, i) {
-		output(i + " " + value['name'], $("#console"));
+		// output(i + " " + value['name'], $("#console"));
 		if (value["name"].localeCompare("README.md") == 0) {
 			readme = i;
 			console.log("obj[" + (readme + 1) + "] = " + obj[readme].name);
@@ -45,7 +57,7 @@ function parse(data) {
 	if (obj["message"] && obj["message"].localeCompare("Not found")) {
 		output("Not found", $("#console"));
 	} else {
-		obj.forEach(print);
+		// obj.forEach(print);
 		obj.forEach(function (value, i) {
 			$("#table").append(function() {
 				let str;
