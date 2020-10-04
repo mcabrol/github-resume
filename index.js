@@ -3,11 +3,14 @@ function search_api() {
 	request_profile(x);
 }
 
+function invert() {
+	$('body').toggleClass("dark");
+}
+
 
 $( document ).ready(function() {
 
 	console.log( "ready!" );
-	textFit($(".logo"),  {widthOnly: true});
 	request_profile("mcabrol");
-
+	// request("mcabrol");
 });

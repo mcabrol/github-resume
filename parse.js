@@ -50,7 +50,7 @@ function parse(data) {
 			$("#table").append(function() {
 				let str;
 				// List
-				str = '<a onclick="display_detail(\'' + value['name'] +  '\')">';
+				str = '<a href="#" onclick="display_detail(\'' + value['name'] +  '\')">';
 					str += '<div class="list bdr row m-0 p-0">';
 						str += '<div class="col-sm-2 m-0 table-padding">';
 							str += '<p class="m-0 p-0">';
