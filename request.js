@@ -53,7 +53,16 @@ function getRemote(url, type, username)
 
   	request.fail(function(jqXHR, textStatus, errorThrown) {
 		$("#spinner").css("display", "none");
-		output("<h1 class='m-0'><b>" + jqXHR.status + "</b></h1><h3>" + errorThrown + "</h3>", $("#errorText"));
+		var str = "<h1 class='m-0'>";
+				str += "<b>";
+					str += jqXHR.status;
+				str += "</b>";
+				str += "</h1>";
+				str += "<h3>";
+					str += errorThrown;
+				str += "</h3>";
+
+		output(str, $("#errorText"));
   	});
 
 }
@@ -61,7 +70,6 @@ function getRemote(url, type, username)
 // function
 
 function request(username) {
-	display_loading(0);
 
 	var api = "https:/api.github.com/";
 	var url_usr = api + "users/" + username;

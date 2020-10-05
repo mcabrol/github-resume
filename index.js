@@ -8,6 +8,7 @@ function invert() {
 }
 
 
+display_loading(0);
 
 
 $( document ).ready(function() {

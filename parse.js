@@ -11,7 +11,8 @@ function parse_contributors(data) {
 
 function parse_profile(object) {
 	// output("<h1>" + object.login + "</h1>", $("#info_window"));
-	output(object.login, $("#logo"));
+	output(object.login, $("#log"));
+	output(object.login, $("#log2"));
 	output("<h1>" + object.bio + "</h1>", $("#info_window"));
 	// output("Email: " + object.email, $("#info_window"));
 	output("<h1>" + object.location + "</h1>", $("#info_window"));
@@ -59,7 +60,7 @@ function parse(obj) {
 			$("#table").append(function() {
 				let str;
 				// List
-				str = '<a href="#" onclick="display_detail(\'' + value['name'] +  '\')">';
+				str = '<a data-toggle="collapse" href="#' + value['name'] + '" role="button" aria-expanded="false" aria-controls="' + value['name'] + '">';
 					str += '<div class="list bdr row m-0 p-0">';
 						str += '<div class="col-sm-2 m-0 table-padding">';
 							str += '<p class="m-0 p-0">';
@@ -81,7 +82,7 @@ function parse(obj) {
 
 				// Detail
 
-				str += '<div class="bdr row m-0 p-0 display-none">';
+				str += '<div id="' + value['name'] + '" class="collapse bdr row m-0 p-0">';
 				str += '<div class="col-sm-4 m-0 table-padding">';
 				str += '<p class=m-0>Last update:</p>';
 				str += '<p>';
