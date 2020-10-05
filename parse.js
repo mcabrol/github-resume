@@ -10,7 +10,6 @@ function parse_contributors(data) {
 }
 
 function parse_profile(object) {
-	console.log(object);
 	// output("<h1>" + object.login + "</h1>", $("#info_window"));
 	output(object.login, $("#logo"));
 	output("<h1>" + object.bio + "</h1>", $("#info_window"));
@@ -51,9 +50,7 @@ function parse_commits(data) {
 	output(size - 1 + " commits", $("#console"));
 }
 
-function parse(data) {
-	var obj = JSON.parse(data);
-
+function parse(obj) {
 	if (obj["message"] && obj["message"].localeCompare("Not found")) {
 		output("Not found", $("#console"));
 	} else {
